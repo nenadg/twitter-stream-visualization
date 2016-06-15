@@ -1,0 +1,28 @@
+{
+	"name": "twitter-stream-visualization",
+	"version": "0.0.1",
+	"private": true,
+	"author":"Nenad Golubović <me@nenadg.com>",
+	"description":"Visualizing realtime Twitter data using D3.js, node and several other things and libs",
+	"scripts": {
+		"start": "node app"
+	},
+	"dependencies": {
+		"topojson": "1",
+		"body-parser": "^1.8.2",
+		"errorhandler": "^1.1.1",
+		"express":"^4.13.3",
+		"express-session": "^1.7.2",
+		"method-override": "^2.1.2",
+		"morgan": "^1.2.2",
+		"multer": "^0.1.3",
+		"serve-favicon": "^2.0.1",
+		"request": "^2.53.0",
+		"xml2js": "^0.4.10",
+		"socket.io":"^1.3.7",
+		"twit":"^2.1.0",
+		"oauth":"0.9.14",
+		"request": "2.53.0",
+		"xml2js": "0.4.16"
+	}
+}

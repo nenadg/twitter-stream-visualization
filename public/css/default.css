@@ -1,0 +1,169 @@
+body, html { margin: 0px; padding: 0px; }
+path { stroke: white; stroke-width: 0.25px; fill: lightsteelblue; opacity:0.6; }
+
+/*path:hover { fill: green; }*/
+
+div.tooltip { position: absolute; text-align: center; width: auto; height: auto; padding: 5px;
+  text-transform: uppercase;
+  font: 10px monospace; color: #fff; background: #4f4f4f; border: 0px; border-radius: 1px; pointer-events: none; }
+
+div.locationtip, div.locationtipfade, div.totalstatustip { position: absolute; text-align: left; width: auto; height: auto; padding: 5px;
+  text-transform: uppercase; z-index: 10; max-width: 300px;
+  font: 10px monospace; color: #000; background: #dfdfdf; border: 0px; border-radius: 1px; pointer-events: none; }
+
+div.locationtipfade {
+  opacity: 0.2;
+}
+
+div.totalstatustip {
+  text-align: left;
+  width: 260px;
+  background: #cfcfcf;
+  z-index: 11;
+  line-height: 11px;
+}
+
+div.totalstatustip:after {
+    content: "";
+    position: absolute;
+    top: 0px;
+    left: -10px;
+    border-width: 10px 0 0 10px;
+    border-style: solid;
+    border-color: #cfcfcf transparent;
+    display: block;
+    width: 0;
+    opacity: 0.9;
+}
+
+div.totalstatustip .left-box {
+  width: 99%;
+  padding: 1px !important;
+  margin: 1px !important;
+  background-color:  #cfcfcf;
+  display: block
+}
+div.totalstatustip .right-box {
+  width: 99%;
+  padding: 1px !important;
+  margin: 1px !important;
+  background-color:  #efefef;
+  display: block;
+}
+
+
+div.locationtip:after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 10px;
+    border-width: 10px 0 0 10px;
+    border-style: solid;
+    border-color: #dfdfdf transparent;
+    display: block;
+    width: 0;
+    opacity: 0.9;
+}
+
+body {
+  background: #fcfcfa;
+}
+
+.cursor-wait {
+  cursor: wait;
+}
+
+.cursor-normal {
+  cursor: default;
+}
+
+.point {
+  fill: transparent;
+  stroke: white;
+  fill-width: 10px;
+  stroke-width: 2px;
+  stroke-opacity: .8;
+}
+
+.point-inner {
+  fill: transparent;
+  stroke: #336699;
+  fill-width: 10px;
+  stroke-width: 2px;
+  stroke-opacity: .8;
+}
+
+.tweet-spot {
+  fill: transparent;
+  stroke: red;
+  fill-width: 2px;
+  stroke-width: 2px;
+  stroke-opacity: .8;
+}
+
+
+.stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+}
+
+.fill {
+  fill: #fff;
+}
+
+.graticule {
+  fill: none;
+  stroke: #defefe;
+  stroke-width: .5px;
+  stroke-opacity: .5;
+}
+
+.land {
+  fill: #888881;
+}
+
+.boundary {
+  fill: none;
+  stroke: #fff;
+  stroke-width: .5px;
+}
+
+.countries {
+  fill: none;
+  stroke: #fff;
+  stroke-width: .5px;
+}
+
+.city {
+  fill: green;
+  stroke: #fff;
+  stroke-width: .5px;
+  z-index: 9999;
+}
+
+.labels {
+  font-family: monospace;
+  text-transform: uppercase;
+  cursor: default;
+
+  -webkit-user-select: none; /* Chrome/Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+
+  /* Rules below not implemented in browsers yet */
+  -o-user-select: none;
+  user-select: none;
+  opacity: 0
+}
+/*.bar {                         
+    fill: none;                 
+    stroke: url(#line-gradient);    
+    stroke-width: 2px;          
+}*/
+
+
+body {
+  overflow: hidden;
+
+}
