@@ -1,9 +1,9 @@
 exports.stream = function(next){
 
-    var apiKey = 'LQ59uQbMAwtYIjv8tZBacl2bJ',                                    // api key
-        apiKeySecret = 'GjAwWVFdpwOcZCcYbf2c95PMsLdSPerHkgjVxyI3ULs6itMUvz',     // api key secret
-        accessToken = '3307057443-cyBdF62trhrYoXrxzUNqShHBHKX3knzm4XltXgR',      // access token
-        accessTokenSecret = 'NPdRCOfyRpbw8GfJgfzN2MWbxYxHw2JdGo8ckwyigKQfP';     // access token secret
+    var apiKey = '',           // api key
+        apiKeySecret = '',     // api key secret
+        accessToken = '',      // access token
+        accessTokenSecret = '';// access token secret
 
     var client = new twit({
         consumer_key: apiKey,
@@ -24,18 +24,20 @@ exports.stream = function(next){
         // Listener when a user emits the "start stream" signal
         socket.on("streamon", function() {
             
-            console.log('Stream state is: ' + (typeof global.stream != 'undefined') );
+            console.log('Stream state is: ' + ( global.stream != undefined) );
             // The stream will be started only when the 1st user arrives
-            if(global.stream === undefined) {
+            if(global.stream == undefined) {
                 console.log('Stream up and running ...');
+                console.log('Users count ' + global.users.length);
                 // 401 fix: sudo ntpdate ntp.org
                 global.stream = client.stream('statuses/filter', { locations: ['-180,-90,180,90'], replies: 'all' }); 
                 
                 global.stream.on('tweet', function(tweet) {
                     
                     if(global.users.length > 0) {
-                
+                        
                         if(tweet.geo){
+
                             var formatted = {
                                 retweets: tweet.retweet_count,
                                 faves: tweet.favorite_count, 
@@ -46,7 +48,10 @@ exports.stream = function(next){
                                 retweeted_status: tweet.retweeted_status
                             };
                             
-                            socket.broadcast.emit("newdata", formatted);
+                            if(global.users.length == 1)
+                                socket.emit("newdata", formatted); 
+                            else
+                                socket.broadcast.emit ("newdata", formatted); 
                         }
                     } 
                     else {
@@ -73,6 +78,11 @@ exports.stream = function(next){
                 // Eliminates the user from the array
                 global.users.splice(index, 1);
                 console.log('Socket disconnected for id ' + socket.id);
+            }
+
+            if( global.users.length == 0){
+                global.stream && stream.stop();
+                global.stream = undefined;
             }
         });
 

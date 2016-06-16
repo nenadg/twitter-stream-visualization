@@ -40,7 +40,7 @@ var sockety = (function(){
 			socket.on("connected", function(r) {
 				// Here the client tells the server to "start stream"
 				emitMessage("streamon");
-
+				console.log('Streaming ....');
 				// This will listen to the "new tweet" signal everytime
 				// there's a new tweet incoming into the stream
 				socket.on("newdata", newdata);
