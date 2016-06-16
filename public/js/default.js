@@ -81,6 +81,8 @@ var geomaniac = (function(){
 			// borders
 			c.strokeStyle = "rgba(225, 215, 255, 0.4)", c.lineWidth = 1, c.beginPath(), path(borders), c.stroke();
 
+			var protate = projection.rotate();
+
 			// cities
 			for(var i in cities){
 				c.fillStyle = "#fff", c.beginPath(), path(cities[i]), c.fill();
@@ -89,8 +91,9 @@ var geomaniac = (function(){
 					xyFromCoordinates = projection([cds[0],cds[1]]);
 
 				// mask and labels
-				var longitude = Number(cities[i].geometry.coordinates[0]) + 180,
-					startLongitude = 360 - ((projection.rotate()[0] + 270) % 360),
+				
+				var longitude = Number(cds[0]) + 180,
+					startLongitude = 360 - ((protate[0] + 270) % 360),
 					endLongitude = (startLongitude + 180) % 360;
 
 				if ((startLongitude < endLongitude && longitude > startLongitude && longitude < endLongitude) ||
@@ -113,20 +116,18 @@ var geomaniac = (function(){
 					loc = tweetLocation? projection([tweetLocation.longitude, tweetLocation.latitude]): null;
 				
 				if(loc){
-					
-					// mask 
-					var longitude = Number(loc[0]) + 180, 
-						startLongitude = 360 - ((projection.rotate()[0] + 270) % 360),
+					var longitude = Number(tweetLocation.longitude) + 180,
+						startLongitude = 360 - ((protate[0] + 270) % 360),
 						endLongitude = (startLongitude + 180) % 360;
 
+					// mask 
 					if ((startLongitude < endLongitude && longitude > startLongitude && longitude < endLongitude) ||
 							(startLongitude > endLongitude && (longitude > startLongitude || longitude < endLongitude))){
-								drawLine(tweetLocation, 'rgba(32, 45, 21, 0.2)');
-					} else {
-						
-						drawLine(tweetLocation, 'rgba(225, 255, 255, 0.4)');
-					}
-
+								drawLine(tweetLocation, 'rgba(255, 255, 255, 0.7)');
+						}
+						else
+							drawLine(tweetLocation, 'rgba(32, 45, 21, 0.1)');
+					
 					removeTweet('clickpoint');
 				}
 			}
@@ -138,21 +139,18 @@ var geomaniac = (function(){
 
 			c.strokeStyle = style;
 			c.beginPath();
-			c.moveTo(beggining[0],beggining[1]);
-			c.lineTo(ending[0],ending[1]);
+			c.moveTo(beggining[0], beggining[1]);
+			c.lineTo(ending[0], ending[1]);
 			c.stroke();
 		}
 
 		var onDrag = function(){
-			dragging = true;
-
 			var dx = d3.event.dx,
 				dy = d3.event.dy,
 				rotation = projection.rotate(),
 				radius = projection.scale(),
 				barRotation = barProjection.rotate(),
 				barRadius = barProjection.scale();
-				//inverted = projection.invert(d3.mouse(this));
 
 			scale = d3.scale.linear()
 				.domain([-1 * radius, radius])
@@ -187,6 +185,7 @@ var geomaniac = (function(){
 			barProjection.rotate(barRotation);
 
 			moved = true;
+			dragging = true;
 				
 			wasMoved.push([dx, dy]);
 		};
@@ -475,6 +474,13 @@ window.addEventListener('load', function(){
 	helpers.loadScript(location.href + 'socket.io/socket.io.js', 'text/javascript', function(){
 		sockety.load();
 		geomaniac.orthographic();
+
+		var connecting = document.createElement('div');
+		connecting.className = 'totalstatustip connecting';
+		connecting.innerHTML = 'Connecting stream ...';
+		connecting.style.cssText = 'position: absolute; right: 100; bottom: 50;'
+
+		document.body.appendChild(connecting);
 	});
 });
 

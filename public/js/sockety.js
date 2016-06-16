@@ -1,6 +1,6 @@
 var sockety = (function(){
 
-	var socket; 
+	var socket, streamon = false;
 
 	var emitMessage = function(signal) {
 		if(socket) {
@@ -12,11 +12,18 @@ var sockety = (function(){
 
 	var newdata = function(tweet){
 		
+		if(!streamon){
+			streamon = true;
+			var connecting = document.querySelector('.connecting');
+			connecting.remove();
+		}
+
 		var formatedTweet = {
 			retweets: tweet.retweets,
 			faves: tweet.faves, 
 			longitude: helpers.formatLocation(tweet.coords).straight[0],
 			latitude: helpers.formatLocation(tweet.coords).straight[1],
+			coords: tweet.coords,
 			text: tweet.text,
 			user: tweet.user,
 			time: tweet.time,
@@ -28,7 +35,6 @@ var sockety = (function(){
 
 	var load = function(){
 		
-
 		if(io !== undefined) {
 			console.log('sockety on...');
 

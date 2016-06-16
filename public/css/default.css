@@ -18,7 +18,7 @@ div.locationtipfade {
 div.totalstatustip {
   text-align: left;
   width: 260px;
-  background: #cfcfcf;
+  background: rgba(207, 207, 220, 0.91);
   z-index: 11;
   line-height: 11px;
 }
@@ -66,7 +66,7 @@ div.locationtip:after {
 }
 
 body {
-  background: #fcfcfa;
+  background: #111;
 }
 
 .cursor-wait {
@@ -166,4 +166,10 @@ body {
 body {
   overflow: hidden;
 
+}
+
+.connecting { 
+  right: 100px;
+  bottom: 20px;
+  width: 100px !important;
 }
