@@ -1,9 +1,9 @@
 exports.stream = function(next){
 
-    var apiKey = '',           // api key
-        apiKeySecret = '',     // api key secret
-        accessToken = '',      // access token
-        accessTokenSecret = '';// access token secret
+    var apiKey = 'l9UXjwAznY0eBFLpftzoTxLmI',                                    // api key
+        apiKeySecret = '37nAZBNdXIusFjczmTOm6ZX2INxNTV2VkqAmGD1gLljErw83ot',     // api key secret
+        accessToken = '3307057443-AHZEPweUTT3rk2Igbi3ZBZJfMNho22zOgpbQAq5',      // access token
+        accessTokenSecret = 'OHnWcQOFk4vyius60mIrKpbTyOB3bVnV6mzBpEus1qR6l';     // access token secret
 
     var client = new twit({
         consumer_key: apiKey,
@@ -33,7 +33,7 @@ exports.stream = function(next){
                 global.stream = client.stream('statuses/filter', { locations: ['-180,-90,180,90'], replies: 'all' }); 
                 
                 global.stream.on('tweet', function(tweet) {
-                    
+                    console.log('arr');
                     if(global.users.length > 0) {
                         
                         if(tweet.geo){
@@ -43,7 +43,9 @@ exports.stream = function(next){
                                 faves: tweet.favorite_count, 
                                 coords: tweet.geo.coordinates, 
                                 text: tweet.text,
-                                user: { name: tweet.user? tweet.user.name: null, screenName: tweet.user? tweet.user.screen_name: null },
+                                user: { name: tweet.user ? tweet.user.name: null, 
+                                        screenName: tweet.user ? tweet.user.screen_name: null,
+                                        image: tweet.user ? tweet.user.profile_background_image_url : null  },
                                 time: tweet.created_at,
                                 retweeted_status: tweet.retweeted_status
                             };

@@ -109,7 +109,7 @@ var geomaniac = (function(){
 					c.fillStyle = 'rgba(255, 255, 255, 0.0)', c.beginPath(), c.fillRect(xyFromCoordinates[0] -1, xyFromCoordinates[1] -6, (decodeURI(cities[i].properties.city).toUpperCase().length * 5), 7);
 				}
 			}
-
+			
 			// tweet spots
 			for(var i in tweetLocations){
 				var tweetLocation = tweetLocations[i],
@@ -124,14 +124,68 @@ var geomaniac = (function(){
 					if ((startLongitude < endLongitude && longitude > startLongitude && longitude < endLongitude) ||
 							(startLongitude > endLongitude && (longitude > startLongitude || longitude < endLongitude))){
 								drawLine(tweetLocation, 'rgba(255, 255, 255, 0.7)');
+								drawSpot(tweetLocation, '0.9',  4);
 						}
-						else
+						else {
 							drawLine(tweetLocation, 'rgba(32, 45, 21, 0.1)');
+							drawSpot(tweetLocation, '0.1', 2);
+						}
 					
 					removeTweet('clickpoint');
 				}
 			}
 		};
+
+		var drawSpot = function(tweet, style, tradius){
+			var ending = barProjection([tweet.longitude, tweet.latitude]);
+
+			var histo = {
+				5:    'rgba(229, 115, 238', 
+				10:   'rgba(200, 239, 234', 
+				30:   'rgba(248, 250, 212', 
+				100:  'rgba(255, 242, 128', 
+				300:  'rgba(240, 186,  50', 
+				800:  'rgba(218,  80,  25', 
+				1000: 'rgba(165,  33, 117', 
+			};
+
+			var circ = Math.PI * 2;
+			var quart = Math.PI / 2;
+		
+
+			var popularity = tweet.retweets + tweet.faves;
+
+			if(popularity <= 5)
+				c.strokeStyle = histo['5'] + ',' + style + ')';
+		
+			if(popularity > 5 && popularity <= 10)
+				c.strokeStyle = histo['10'] + ',' + style + ')';
+		
+			if(popularity > 10 && popularity <= 30)
+				c.strokeStyle = histo['30'] + ',' + style + ')';
+			
+			if(popularity > 30 && popularity <= 100)
+				c.strokeStyle = histo['100'] + ',' + style + ')';
+			
+			if(popularity > 100 && popularity <= 300)
+				c.strokeStyle = histo['300'] + ',' + style + ')';
+		
+			if(popularity > 300 && popularity <= 800)
+				c.strokeStyle = histo['800'] + ',' + style + ')';
+			
+			if(popularity > 800 && popularity <= 1000)
+				c.strokeStyle = histo['1000'] + ',' + style + ')';
+			
+			if(popularity > 1000)
+				c.strokeStyle = 'rgba(144, 253, 222, ' + style + ')';
+					
+			console.log((Math.abs(Math.tan(projection.scale()/1)) ));
+			console.log(projection.scale());
+
+			var radius = Math.log(projection.scale()); // Math.floor(radius) ...
+			c.lineWidth = 2, c.beginPath(), c.lineTo(ending[0], ending[1]), c.arc(ending[0], ending[1], 2, - (quart), ((circ) * (100 / 100)) - quart, false), c.stroke();
+			
+		}
 
 		var drawLine = function(tweet, style){
 			var beggining = projection([tweet.longitude, tweet.latitude]),
@@ -284,7 +338,7 @@ var geomaniac = (function(){
 										'<span style="font-style: italic;">' + _T.time + '</span>'
 										].join('');
 
-						addDomElement('clickpoint', _DOM, 'locationtip', projection([_T.longitude, _T.latitude]), false);
+						addDomElement('clickpoint', _DOM, 'locationtip', barProjection([_T.longitude, _T.latitude]), false);
 					}
 				}
 			}
@@ -325,7 +379,7 @@ var geomaniac = (function(){
 			}
 
 			// ocean
-			if(!country.geometry){
+			if(country && !country.geometry){
 				draw();
 			}
 
