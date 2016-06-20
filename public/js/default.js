@@ -400,7 +400,7 @@ var geomaniac = (function(){
 				}
 			}
 
-			if(tweetLocations.length > 0 && zoom.scale() > 6){
+			if(tweetLocations.length > 0 /*&& zoom.scale() > 6*/){
 				
 				addTweet(barProjection.invert([x,y]));
 			}
