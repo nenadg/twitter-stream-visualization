@@ -402,7 +402,7 @@ var geomaniac = (function(){
 
 			if(tweetLocations.length > 0 && zoom.scale() > 6){
 				
-				addTweet(inverted);
+				addTweet(barProjection.invert([x,y]));
 			}
 		}, false);
 
