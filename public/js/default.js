@@ -472,8 +472,15 @@ window.addEventListener('load', function(){
 	})();
 
 	helpers.loadScript(location.href + 'socket.io/socket.io.js', 'text/javascript', function(){
-		sockety.load();
-		geomaniac.orthographic();
+		
+		var iointerval = setInterval(function(){
+		    if(typeof io != 'undefined'){
+			clearInterval(iointerval);
+			sockety.load();
+			geomaniac.orthographic();
+			console.log('io ready.');
+                    }
+		}, 50);
 
 		var connecting = document.createElement('div');
 		connecting.className = 'totalstatustip connecting';
