@@ -133,6 +133,10 @@ var helpers = (function(){
 		}, 120);
 	};
 
+	var getRandomInRange = function(from, to, fixed) {
+		return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
+	}
+
 	return {
 		formatLocation: formatLocation,
 		formatTipPosition: formatTipPosition,
@@ -141,7 +145,8 @@ var helpers = (function(){
 		locationtip: locationtip,
 		totalstatustip: totalstatustip,
 		prefixMatch: prefixMatch,
-		loadScript: loadScript
+		loadScript: loadScript,
+		getRandomInRange : getRandomInRange
 	};
 
 })();

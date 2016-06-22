@@ -11,12 +11,22 @@ var geomaniac = (function(){
 
 		var animate = function() {
 
-			requestAnimFrame(animate);
+			requestAnimationFrame(animate);
 
-			// draw only if moved, or it will eat cpu for breakfast
-			if(moved){
-				draw();
-				moved = false;
+			now = Date.now();
+			elapsed = now - then;
+
+			// if enough time has elapsed, draw the next frame
+			if (elapsed > fpsInterval) {
+				
+				// Get ready for next frame by setting then=now, but...
+				// Also, adjust for fpsInterval not being multiple of 16.67
+				then = now - (elapsed % fpsInterval);
+
+				if(moved){
+					draw();
+					moved = false;
+				}
 			}
 		};
 
@@ -81,17 +91,24 @@ var geomaniac = (function(){
 			// borders
 			c.strokeStyle = "rgba(225, 215, 255, 0.4)", c.lineWidth = 1, c.beginPath(), path(borders), c.stroke();
 
-			var protate = projection.rotate();
+			var protate = projection.rotate(),
+				mouseCoords = projection.invert([mousepos.x, mousepos.y]),
+				scaleLevel = zoom && zoom.scale() || 0;
+
 
 			// cities
 			for(var i in cities){
+
+				// no show
+				//if(scaleLevel < 4)
+				//	return;
+
 				c.fillStyle = "#fff", c.beginPath(), path(cities[i]), c.fill();
 
 				var cds = cities[i].geometry.coordinates,
 					xyFromCoordinates = projection([cds[0],cds[1]]);
 
 				// mask and labels
-				
 				var longitude = Number(cds[0]) + 180,
 					startLongitude = 360 - ((protate[0] + 270) % 360),
 					endLongitude = (startLongitude + 180) % 360;
@@ -178,9 +195,7 @@ var geomaniac = (function(){
 			
 			if(popularity > 1000)
 				c.strokeStyle = 'rgba(144, 253, 222, ' + style + ')';
-					
-			console.log((Math.abs(Math.tan(projection.scale()/1)) ));
-			console.log(projection.scale());
+		
 
 			var radius = Math.log(projection.scale()); // Math.floor(radius) ...
 			c.lineWidth = 2, c.beginPath(), c.lineTo(ending[0], ending[1]), c.arc(ending[0], ending[1], 2, - (quart), ((circ) * (100 / 100)) - quart, false), c.stroke();
@@ -356,9 +371,38 @@ var geomaniac = (function(){
 
 			// prevents clicks on dragend
 			if(wasMoved.length > 1){
+				console.log('thwart')
 				wasMoved = [];
 				return;
 			}
+
+			var x = event.pageX - elemLeft,
+				y = event.pageY - elemTop,
+				inverted = projection.invert([x,y]);
+				
+			d3.transition()
+				.duration(1250)
+				.tween("rotate", function() {
+					var r = d3.interpolate(projection.rotate(), [-inverted[0], -inverted[1]]);
+					
+					return function(t) {
+						projection.rotate(r(t));
+						barProjection.rotate(r(t));
+
+						/*projection.scale(300 * 5);
+						barProjection.scale(300 * 5);*/
+
+						moved = false;
+						dragging = false;
+						wasMoved = [];
+						draw();
+					};
+				})
+				.transition()
+				.each('end',function(){
+					wasMoved = [];
+				})
+
 		}, false);
 
 		elem.addEventListener('mousemove', function(event) {
@@ -400,7 +444,7 @@ var geomaniac = (function(){
 				}
 			}
 
-			if(tweetLocations.length > 0 /*&& zoom.scale() > 6*/){
+			if(tweetLocations.length > 0 && zoom && zoom.scale() > 6){
 				
 				addTweet(barProjection.invert([x,y]));
 			}
@@ -487,6 +531,12 @@ var geomaniac = (function(){
 
 var mousepos = {};
 
+var frameCount = 0;
+var fps = 30, now, elapsed;
+var fpsInterval = 1000 / fps;
+var then = Date.now();
+var startTime = then;
+
 window.addEventListener('load', function(){
 
 	document.addEventListener('mousemove', function(event){
@@ -496,7 +546,8 @@ window.addEventListener('load', function(){
 
 	prefix = helpers.prefixMatch(["webkit", "ms", "Moz", "O"]);
 
-	window.requestAnimFrame = (function(){
+
+	/*window.requestAnimFrame = (function(){
 
 		var lastTime = 0, _prefix = prefix.replace(/-/g, '');
 		var requestAnimationFrame = window[_prefix+'RequestAnimationFrame'];
@@ -523,17 +574,17 @@ window.addEventListener('load', function(){
 		}else {
 			return window.cancelAnimationFrame;
 		}
-	})();
+	})();*/
 
 	helpers.loadScript(location.href + 'socket.io/socket.io.js', 'text/javascript', function(){
-		
+
 		var iointerval = setInterval(function(){
-		    if(typeof io != 'undefined'){
+			if(typeof io != 'undefined'){
 			clearInterval(iointerval);
 			sockety.load();
 			geomaniac.orthographic();
 			console.log('io ready.');
-                    }
+					}
 		}, 50);
 
 		var connecting = document.createElement('div');
