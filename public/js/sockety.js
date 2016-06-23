@@ -30,7 +30,7 @@ var sockety = (function(){
 			retweeted_status: tweet.retweeted_status
 		};
 		
-		if(geomaniac.tweetLocations < 1000)
+		if(geomaniac.tweetLocations.length < 1000)
 			geomaniac.tweetLocations.push(formatedTweet);
 		else {
 			geomaniac.tweetLocations.pop();
