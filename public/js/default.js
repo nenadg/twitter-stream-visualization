@@ -8,6 +8,27 @@ var geomaniac = (function(){
 		tweetLocations = [], loadingTooltip = true;
 
 	var orthographic = function(){
+		 // uncomment for testing
+		 /*for(var i = 0; i < 202; i++){
+            var k = {"retweets":0,"faves":0,"coords":[-33.4394,-70.5521],"text":"Blablabla bla bla bla","user":{"name":"lessgeneric","screenName":"lessgeneric"},"time":"Wed Jun 22 18:50:37 +0000 2016"}
+
+            k.coords[0] = helpers.getRandomInRange(-180, 180, 3);
+            k.coords[1] = helpers.getRandomInRange(-90, 90, 3);
+
+            var ft = {
+                retweets: k.retweets,
+                faves: k.faves,
+                longitude: helpers.formatLocation(k.coords).straight[0],
+                latitude: helpers.formatLocation(k.coords).straight[1],
+                coords: k.coords,
+                text: k.text,
+                user: k.user,
+                time: k.time,
+                retweeted_status: k.retweeted_status
+            }
+
+            tweetLocations.push(ft);
+        }*/
 
 		var animate = function() {
 
@@ -371,15 +392,18 @@ var geomaniac = (function(){
 
 			// prevents clicks on dragend
 			if(wasMoved.length > 1){
-				console.log('thwart')
 				wasMoved = [];
 				return;
 			}
 
 			var x = event.pageX - elemLeft,
 				y = event.pageY - elemTop,
-				inverted = projection.invert([x,y]);
-				
+				inverted = projection.invert([x,y]),
+				zoomBy = zoomByB = 1,
+				initialProjectionScale = projection.scale(),
+				initialBarProjectionScale = barProjection.scale(),
+				zoomIn = initialProjectionScale > 3000 ? false: true;
+
 			d3.transition()
 				.duration(1250)
 				.tween("rotate", function() {
@@ -389,11 +413,14 @@ var geomaniac = (function(){
 						projection.rotate(r(t));
 						barProjection.rotate(r(t));
 
-						/*projection.scale(300 * 5);
-						barProjection.scale(300 * 5);*/
+						zoomBy = zoomIn ? initialProjectionScale + (t * 900) : initialProjectionScale - (t * 1200);
+						zoomByB = zoomIn ? initialBarProjectionScale + (t * 1230.3) : initialBarProjectionScale - (1640.4)
+						
+						zoom.scale(t * 3.1);
 
-						moved = false;
-						dragging = false;
+						projection.scale(zoomBy);
+						barProjection.scale(zoomByB);
+						
 						wasMoved = [];
 						draw();
 					};
@@ -401,7 +428,7 @@ var geomaniac = (function(){
 				.transition()
 				.each('end',function(){
 					wasMoved = [];
-				})
+				});
 
 		}, false);
 
@@ -546,45 +573,19 @@ window.addEventListener('load', function(){
 
 	prefix = helpers.prefixMatch(["webkit", "ms", "Moz", "O"]);
 
-
-	/*window.requestAnimFrame = (function(){
-
-		var lastTime = 0, _prefix = prefix.replace(/-/g, '');
-		var requestAnimationFrame = window[_prefix+'RequestAnimationFrame'];
-		var cancelAnimationFrame =  window[_prefix+'CancelAnimationFrame'] || window[_prefix+'CancelRequestAnimationFrame'];
-
-		// 'moz' is for slow linux render for mozilla
-		if(!requestAnimationFrame || _prefix.indexOf('moz')){
-			return window.requestAnimationFrame = function(callback, element) {
-				var currTime = new Date().getTime(),
-					timeToCall = Math.max(0, 1 - (currTime - lastTime)),
-					id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
-
-				lastTime = currTime + timeToCall;
-				return id;
-			};
-		} else {
-			return window.requestAnimationFrame;
-		}
-
-		if(!cancelAnimationFrame){
-			window.cancelAnimationFrame = function(id) {
-				clearTimeout(id);
-			};
-		}else {
-			return window.cancelAnimationFrame;
-		}
-	})();*/
-
 	helpers.loadScript(location.href + 'socket.io/socket.io.js', 'text/javascript', function(){
+
+		// uncomment for testing
+		/*geomaniac.orthographic();
+        return;*/
 
 		var iointerval = setInterval(function(){
 			if(typeof io != 'undefined'){
-			clearInterval(iointerval);
-			sockety.load();
-			geomaniac.orthographic();
-			console.log('io ready.');
-					}
+				clearInterval(iointerval);
+				sockety.load();
+				geomaniac.orthographic();
+				console.log('io ready.');
+			}
 		}, 50);
 
 		var connecting = document.createElement('div');

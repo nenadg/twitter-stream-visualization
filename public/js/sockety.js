@@ -30,7 +30,12 @@ var sockety = (function(){
 			retweeted_status: tweet.retweeted_status
 		};
 		
-		geomaniac.tweetLocations.push(formatedTweet);
+		if(geomaniac.tweetLocations < 1000)
+			geomaniac.tweetLocations.push(formatedTweet);
+		else {
+			geomaniac.tweetLocations.pop();
+			geomaniac.tweetLocations.unshift(formatedTweet);
+		}
 	}
 
 	var load = function(){
