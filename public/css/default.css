@@ -177,3 +177,7 @@ body {
 .twitter-tweet-button{
   position: absolute !important; left: 5px !important; bottom: 5px !important;
 }
+
+.adsense{
+  position: absolute !important; left: 100px !important; bottom: 5px !important; height: 100px; width: 320px; background: #000;
+}

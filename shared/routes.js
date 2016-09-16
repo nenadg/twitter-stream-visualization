@@ -33,7 +33,7 @@ exports.stream = function(next){
                 global.stream = client.stream('statuses/filter', { locations: ['-180,-90,180,90'], replies: 'all' }); 
                 
                 global.stream.on('tweet', function(tweet) {
-                    console.log('arr');
+
                     if(global.users.length > 0) {
                         
                         if(tweet.geo){
